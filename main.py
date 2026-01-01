@@ -4,10 +4,15 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+# Environment variables
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
-def send_telegram(message):
+def send_telegram(message: str):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("Telegram credentials not set")
+        return
+
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
@@ -28,7 +33,7 @@ def webhook():
         description = event.get("description", "New Solana transaction detected")
 
         message = (
-            "🚨 <b>Solana Wallet Activity</b>\n\n"
+            "🔔 <b>Solana Wallet Activity</b>\n\n"
             f"{description}\n\n"
             f"<b>Tx:</b> {tx}"
         )
